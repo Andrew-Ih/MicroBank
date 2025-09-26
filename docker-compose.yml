@@ -1,0 +1,61 @@
+version: '3.8'
+services:
+  # Infrastructure
+  localstack:
+    image: localstack/localstack:3.0
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=sns,sqs,s3
+      - DEBUG=1
+    volumes:
+      - "./infra/localstack:/etc/localstack/init/ready.d"
+
+  # Databases
+  accounts-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: accounts_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+
+  ledger-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ledger_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+
+  notifications-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: notifications_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5434:5432"
+
+  # Observability
+  jaeger:
+    image: jaegertracing/all-in-one:1.50
+    ports:
+      - "16686:16686"
+      - "14268:14268"
+
+  prometheus:
+    image: prom/prometheus:v2.47.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - "./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+
+  grafana:
+    image: grafana/grafana:10.1.0
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
