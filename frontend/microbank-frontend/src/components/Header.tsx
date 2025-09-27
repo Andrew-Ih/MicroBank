@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { useAuth0 } from '@auth0/auth0-react';
 
 interface HeaderProps {
   connectionStatus: 'connecting' | 'connected' | 'disconnected' | 'error';
@@ -26,10 +27,16 @@ interface HeaderProps {
 
 export function Header({ connectionStatus, notificationCount = 0, user }: HeaderProps) {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const { user: auth0User, logout } = useAuth0();
 
-  const userInitials = user?.name 
-    ? user.name.split(' ').map(n => n[0]).join('').toUpperCase()
-    : user?.email?.slice(0, 2).toUpperCase() || 'U';
+  const handleLogout = () => {
+    logout({ logoutParams: { returnTo: window.location.origin } });
+  };
+
+  const displayUser = auth0User || user;
+  const userInitials = displayUser?.name 
+    ? displayUser.name.split(' ').map(n => n[0]).join('').toUpperCase()
+    : displayUser?.email?.slice(0, 2).toUpperCase() || 'U';
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -114,10 +121,10 @@ export function Header({ connectionStatus, notificationCount = 0, user }: Header
               <DropdownMenuLabel>
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium">
-                    {user?.name || 'User'}
+                    {displayUser?.name || 'User'}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {user?.email}
+                    {displayUser?.email}
                   </p>
                 </div>
               </DropdownMenuLabel>
@@ -131,7 +138,7 @@ export function Header({ connectionStatus, notificationCount = 0, user }: Header
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive">
+              <DropdownMenuItem onClick={handleLogout} className="text-destructive">
                 <span>Sign out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
