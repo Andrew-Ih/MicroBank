@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useForm } from 'node_modules/react-hook-form/dist';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,7 +25,7 @@ type TransactionFormData = z.infer<typeof transactionSchema>;
 
 interface TransactionFormProps {
   accounts: Array<{ id: string; currency: string; }>;
-  onSubmit: (data: TransactionFormData & { idempotency_key: string }) => Promise<any>;
+  onSubmit: (data: TransactionFormData & { idempotency_key: string }) => Promise<void>;
   isLoading?: boolean;
 }
 
