@@ -15,6 +15,7 @@ import {
   CheckCircle
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth0 } from '@auth0/auth0-react';
 import heroImage from "@/assets/fintech-hero.jpg";
 
 const features = [
@@ -59,11 +60,16 @@ const stats = [
 
 export function LandingPage() {
   const navigate = useNavigate();
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
   const [email, setEmail] = useState("");
 
   const handleGetStarted = () => {
     try {
-      navigate("/dashboard");
+      if (isAuthenticated) {
+        navigate("/dashboard");
+      } else {
+        loginWithRedirect();
+      }
     } catch (error) {
       console.error("Navigation failed:", error);
     }
