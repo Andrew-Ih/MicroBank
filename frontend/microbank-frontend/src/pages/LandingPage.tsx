@@ -68,7 +68,12 @@ export function LandingPage() {
       if (isAuthenticated) {
         navigate("/dashboard");
       } else {
-        loginWithRedirect();
+        loginWithRedirect({
+          authorizationParams: {
+            connection: 'google-oauth2',
+            prompt: 'select_account'
+          }
+        });
       }
     } catch (error) {
       console.error("Navigation failed:", error);
