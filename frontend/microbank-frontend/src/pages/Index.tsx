@@ -1,5 +1,5 @@
 import { Header } from "@/components/Header";
-import { LandingPage } from "@/components/LandingPage";
+import { LandingPage } from "@/pages/LandingPage";
 
 const Index = () => {
   return (
