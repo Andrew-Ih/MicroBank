@@ -107,13 +107,13 @@ export function LandingPage() {
                   Get Started Free
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button 
+                {/* <Button 
                   variant="outline" 
                   size="lg" 
                   className="text-lg px-8 py-6 h-auto border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                 >
                   Watch Demo
-                </Button>
+                </Button> */}
               </div>
 
               <div className="flex items-center gap-6 pt-4">
@@ -243,7 +243,7 @@ export function LandingPage() {
                 </CardContent>
               </Card>
               
-              <Card className="card-fintech mt-8">
+              <Card className="card-fintech">
                 <CardContent className="p-6 text-center">
                   <Zap className="h-8 w-8 text-success mx-auto mb-3" />
                   <h3 className="font-semibold mb-2">Instant</h3>
@@ -253,7 +253,7 @@ export function LandingPage() {
                 </CardContent>
               </Card>
               
-              <Card className="card-fintech -mt-4">
+              <Card className="card-fintech">
                 <CardContent className="p-6 text-center">
                   <TrendingUp className="h-8 w-8 text-warning mx-auto mb-3" />
                   <h3 className="font-semibold mb-2">Smart</h3>
@@ -318,7 +318,7 @@ export function LandingPage() {
               </div>
             </div>
             <div className="text-sm text-muted-foreground">
-              © 2024 Microbank Lite+. All rights reserved.
+              © 2025 Microbank Lite+. All rights reserved.
             </div>
           </div>
         </div>

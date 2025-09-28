@@ -5,9 +5,6 @@ import { useAuth0 } from '@auth0/auth0-react';
 const Dashboard = () => {
   const { isAuthenticated, isLoading } = useAuth0();
 
-  if (isLoading) return <div>Loading...</div>;
-  if (!isAuthenticated) return <div>Please log in</div>;
-  
   return (
     <div className="min-h-screen bg-background">
       <Header />

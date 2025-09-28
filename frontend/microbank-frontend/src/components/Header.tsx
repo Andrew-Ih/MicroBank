@@ -1,4 +1,4 @@
-import { Bell, Settings, User, LogOut, Menu } from "lucide-react";
+import { Settings, User, LogOut, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
   DropdownMenu,
@@ -18,7 +18,7 @@ interface HeaderProps {
 
 export function Header({ onMenuClick }: HeaderProps) {
   const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
-  
+
   return (
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -51,14 +51,23 @@ export function Header({ onMenuClick }: HeaderProps) {
         {/* Right side - Actions */}
         <div className="flex items-center gap-2">
           {/* Notifications */}
-          <NotificationCenter />
+          {isAuthenticated && <NotificationCenter />}
 
           {/* Theme Toggle */}
           <ThemeToggle />
 
           {/* Auth Button */}
           {!isAuthenticated ? (
-            <Button onClick={() => loginWithRedirect()}>
+            <Button
+              onClick={async () => {
+                try {
+                  await loginWithRedirect();
+                } catch (error) {
+                  console.error("Login failed:", error);
+                  alert("Login failed. Please try again.");
+                }
+              }}
+            >
               Login
             </Button>
           ) : (
@@ -90,7 +99,14 @@ export function Header({ onMenuClick }: HeaderProps) {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
                   className="cursor-pointer text-destructive focus:text-destructive"
-                  onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+                  onClick={async () => {
+                    try {
+                      await logout({ logoutParams: { returnTo: window.location.origin } });
+                    } catch (error) {
+                      console.error("Logout failed:", error);
+                      alert("Logout failed. Please try again.");
+                    }
+                  }}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign out
