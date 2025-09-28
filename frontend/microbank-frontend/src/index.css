@@ -2,124 +2,156 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fintech Design System - Professional Banking Interface */
+/* Microbank Lite+ Design System - Premium Fintech UI */
 
 @layer base {
   :root {
-    /* Core Fintech Colors */
-    --background: 255 255 255;
+    /* Light Mode - Premium Banking Theme */
+    --background: 0 0% 99%;
     --foreground: 210 11% 15%;
 
-    /* Brand Colors - Deep Professional Blues */
-    --primary: 228 94% 67%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 228 94% 80%;
-    
-    /* Financial Status Colors */
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
-    --success-glow: 142 76% 50%;
-    
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-    
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    /* Card & Surface Colors */
     --card: 0 0% 100%;
     --card-foreground: 210 11% 15%;
-    --card-elevated: 220 14% 96%;
-    
-    /* Interactive Elements */
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 210 11% 15%;
-    
-    --accent: 228 94% 67%;
-    --accent-foreground: 0 0% 100%;
-    
-    --muted: 220 14% 96%;
-    --muted-foreground: 215 20% 45%;
+    --card-border: 220 13% 91%;
 
-    /* Form & Input */
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 228 94% 67%;
-
-    /* Popover */
     --popover: 0 0% 100%;
     --popover-foreground: 210 11% 15%;
 
-    /* Design Tokens */
-    --radius: 0.75rem;
-    
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(228, 94%, 67%), hsl(228, 94%, 80%));
-    --gradient-success: linear-gradient(135deg, hsl(142, 76%, 36%), hsl(142, 76%, 50%));
-    --gradient-card: linear-gradient(145deg, hsl(0, 0%, 100%), hsl(220, 14%, 98%));
-    --gradient-hero: linear-gradient(135deg, hsl(228, 94%, 67%) 0%, hsl(268, 94%, 67%) 100%);
-    
-    /* Shadows */
-    --shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --shadow-medium: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-large: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.3);
-    
-    /* Animations */
+    /* Primary - Professional Blue */
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 221 100% 97%;
+    --primary-dark: 221 83% 45%;
+
+    /* Secondary - Sophisticated Gray */
+    --secondary: 210 16% 96%;
+    --secondary-foreground: 210 11% 15%;
+    --secondary-dark: 210 16% 88%;
+
+    /* Success - Financial Green */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --success-light: 142 100% 97%;
+
+    /* Warning - Amber */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --warning-light: 38 100% 97%;
+
+    /* Destructive - Error Red */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-light: 0 100% 97%;
+
+    /* Neutral Grays */
+    --muted: 210 16% 96%;
+    --muted-foreground: 210 11% 46%;
+    --muted-dark: 210 16% 88%;
+
+    --accent: 210 16% 96%;
+    --accent-foreground: 210 11% 15%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 221 83% 53%;
+
+    /* Light Mode Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(221 83% 53%), hsl(221 83% 45%));
+    --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 28%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 16% 98%));
+    --gradient-hero: linear-gradient(135deg, hsl(221 100% 97%), hsl(210 16% 98%));
+
+    /* Light Mode Shadows */
+    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow-card-hover: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
+    --shadow-primary: 0 10px 30px -10px hsl(221 83% 53% / 0.3);
+
+    /* Animation */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --radius: 0.75rem;
+
+    /* Sidebar Light Mode */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    /* Dark Theme - Premium Banking */
-    --background: 222 84% 5%;
-    --foreground: 210 40% 98%;
+    /* Dark Mode - Premium Black Banking Theme */
+    --background: 210 11% 4%;
+    --foreground: 0 0% 98%;
 
-    --primary: 228 94% 67%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 228 94% 80%;
-    
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
-    --success-glow: 142 76% 50%;
-    
-    --warning: 38 92% 50%;
-    --warning-foreground: 222 84% 5%;
-    
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --card: 210 11% 6%;
+    --card-foreground: 0 0% 98%;
+    --card-border: 210 11% 15%;
 
-    --card: 222 84% 8%;
-    --card-foreground: 210 40% 98%;
-    --card-elevated: 222 84% 12%;
-    
-    --secondary: 217 33% 18%;
-    --secondary-foreground: 210 40% 98%;
-    
-    --accent: 228 94% 67%;
-    --accent-foreground: 222 84% 5%;
-    
-    --muted: 217 33% 18%;
-    --muted-foreground: 215 20% 65%;
+    --popover: 210 11% 6%;
+    --popover-foreground: 0 0% 98%;
 
-    --border: 217 33% 18%;
-    --input: 217 33% 18%;
-    --ring: 228 94% 67%;
+    /* Primary - Bright Blue for Dark */
+    --primary: 221 100% 70%;
+    --primary-foreground: 210 11% 4%;
+    --primary-light: 221 100% 8%;
+    --primary-dark: 221 100% 65%;
 
-    --popover: 222 84% 8%;
-    --popover-foreground: 210 40% 98%;
-    
-    /* Dark Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(228, 94%, 67%), hsl(228, 94%, 80%));
-    --gradient-success: linear-gradient(135deg, hsl(142, 76%, 36%), hsl(142, 76%, 50%));
-    --gradient-card: linear-gradient(145deg, hsl(222, 84%, 8%), hsl(222, 84%, 12%));
-    --gradient-hero: linear-gradient(135deg, hsl(228, 94%, 67%) 0%, hsl(268, 94%, 67%) 100%);
-    
-    /* Dark Shadows */
-    --shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
-    --shadow-medium: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
-    --shadow-large: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
-    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.2);
+    /* Secondary - Dark Gray */
+    --secondary: 210 11% 10%;
+    --secondary-foreground: 0 0% 90%;
+    --secondary-dark: 210 11% 8%;
+
+    /* Success - Bright Green for Dark */
+    --success: 142 86% 50%;
+    --success-foreground: 210 11% 4%;
+    --success-light: 142 100% 8%;
+
+    /* Warning - Bright Amber for Dark */
+    --warning: 38 100% 60%;
+    --warning-foreground: 210 11% 4%;
+    --warning-light: 38 100% 8%;
+
+    /* Destructive - Bright Red for Dark */
+    --destructive: 0 86% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --destructive-light: 0 100% 8%;
+
+    /* Neutral Grays for Dark */
+    --muted: 210 11% 10%;
+    --muted-foreground: 210 11% 60%;
+    --muted-dark: 210 11% 8%;
+
+    --accent: 210 11% 10%;
+    --accent-foreground: 0 0% 90%;
+
+    --border: 210 11% 15%;
+    --input: 210 11% 10%;
+    --ring: 221 100% 70%;
+
+    /* Dark Mode Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(221 100% 70%), hsl(221 100% 65%));
+    --gradient-success: linear-gradient(135deg, hsl(142 86% 50%), hsl(142 86% 45%));
+    --gradient-card: linear-gradient(145deg, hsl(210 11% 6%), hsl(210 11% 8%));
+    --gradient-hero: linear-gradient(135deg, hsl(221 100% 8%), hsl(210 11% 6%));
+
+    /* Dark Mode Shadows */
+    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.3), 0 1px 2px -1px hsl(0 0% 0% / 0.3);
+    --shadow-card-hover: 0 4px 6px -1px hsl(0 0% 0% / 0.3), 0 2px 4px -2px hsl(0 0% 0% / 0.3);
+    --shadow-primary: 0 10px 30px -10px hsl(221 100% 70% / 0.3);
+
+    /* Sidebar Dark Mode */
+    --sidebar-background: 210 11% 3%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 221 100% 70%;
+    --sidebar-primary-foreground: 210 11% 4%;
+    --sidebar-accent: 210 11% 8%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 210 11% 15%;
+    --sidebar-ring: 221 100% 70%;
   }
 }
 
@@ -129,6 +161,88 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@layer components {
+  /* Fintech Card Components */
+  .card-fintech {
+    @apply bg-gradient-to-br from-card to-card/80 border-card-border shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] transition-[var(--transition-smooth)];
+  }
+  
+  .card-balance {
+    @apply bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20;
+  }
+  
+  .card-transaction {
+    @apply bg-card border-border hover:bg-accent/50 transition-[var(--transition-smooth)];
+  }
+  
+  /* Button Variants */
+  .btn-gradient {
+    @apply bg-[var(--gradient-primary)] text-primary-foreground shadow-[var(--shadow-primary)];
+  }
+  
+  .btn-success {
+    @apply bg-[var(--gradient-success)] text-success-foreground;
+  }
+  
+  /* Animation Classes */
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out;
+  }
+  
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out;
+  }
+  
+  .animate-scale-in {
+    animation: scale-in 0.2s ease-out;
+  }
+  
+  /* Transaction Status Indicators */
+  .status-pending {
+    @apply bg-warning/10 text-warning border-warning/20;
+  }
+  
+  .status-approved {
+    @apply bg-success/10 text-success border-success/20;
+  }
+  
+  .status-rejected {
+    @apply bg-destructive/10 text-destructive border-destructive/20;
+  }
+}
+
+@layer utilities {
+  /* Custom Gradient Utilities */
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .gradient-success {
+    background: var(--gradient-success);
+  }
+  
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+  
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+  
+  /* Shadow Utilities */
+  .shadow-fintech {
+    box-shadow: var(--shadow-card);
+  }
+  
+  .shadow-fintech-hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+  
+  .shadow-primary {
+    box-shadow: var(--shadow-primary);
   }
 }
