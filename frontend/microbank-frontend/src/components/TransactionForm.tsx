@@ -1,230 +1,199 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Badge } from '@/components/ui/badge';
-import { ArrowDownLeft, ArrowUpRight, CreditCard, Upload } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowUpRight, ArrowDownLeft, DollarSign, AlertCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-const transactionSchema = z.object({
-  account_id: z.string().uuid('Invalid account ID'),
-  kind: z.enum(['deposit', 'withdraw'], {
-    required_error: 'Please select a transaction type',
-  }),
-  amount_cents: z.number().positive('Amount must be greater than 0'),
-});
-
-type TransactionFormData = z.infer<typeof transactionSchema>;
-
-interface TransactionFormProps {
-  accounts: Array<{ id: string; currency: string; }>;
-  onSubmit: (data: TransactionFormData & { idempotency_key: string }) => Promise<void>;
-  isLoading?: boolean;
+interface Account {
+  id: string;
+  balance: number;
+  currency: string;
+  accountNumber: string;
 }
 
-export function TransactionForm({ accounts, onSubmit, isLoading = false }: TransactionFormProps) {
-  const [selectedType, setSelectedType] = useState<'deposit' | 'withdraw'>('deposit');
+interface TransactionFormProps {
+  type: 'deposit' | 'withdraw';
+  onClose: () => void;
+  account: Account;
+}
+
+export function TransactionForm({ type, onClose, account }: TransactionFormProps) {
+  const [amount, setAmount] = useState('');
+  const [description, setDescription] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const form = useForm<TransactionFormData>({
-    resolver: zodResolver(transactionSchema),
-    defaultValues: {
-      kind: 'deposit',
-    },
-  });
-
-  const handleSubmit = async (data: TransactionFormData) => {
-    try {
-      const idempotencyKey = crypto.randomUUID();
-      await onSubmit({
-        ...data,
-        idempotency_key: idempotencyKey,
-      });
-      
-      form.reset();
-      toast({
-        title: 'Transaction submitted',
-        description: `Your ${data.kind} request has been processed.`,
-      });
-    } catch (error) {
-      toast({
-        title: 'Transaction failed',
-        description: error instanceof Error ? error.message : 'An error occurred',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const formatCurrency = (amount: number, currency: string) => {
+  const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: currency,
-      minimumFractionDigits: 2,
-    }).format(amount / 100);
+      currency: account.currency,
+    }).format(amount);
   };
 
-  const selectedAccount = accounts.find(acc => acc.id === form.watch('account_id'));
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const amountNum = parseFloat(amount);
+    if (!amountNum || amountNum <= 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid amount greater than 0",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (type === 'withdraw' && amountNum > account.balance) {
+      toast({
+        title: "Insufficient Funds",
+        description: "You don't have enough balance for this withdrawal",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    toast({
+      title: `${type === 'deposit' ? 'Deposit' : 'Withdrawal'} Initiated`,
+      description: `Your ${type} of ${formatCurrency(amountNum)} is being processed`,
+      variant: "default",
+    });
+    
+    setIsLoading(false);
+    onClose();
+  };
+
+  const isWithdraw = type === 'withdraw';
+  const newBalance = isWithdraw 
+    ? account.balance - parseFloat(amount || '0')
+    : account.balance + parseFloat(amount || '0');
 
   return (
-    <Card className="bg-card border-border shadow-soft">
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <CreditCard className="h-5 w-5" />
-          <span>New Transaction</span>
-        </CardTitle>
-      </CardHeader>
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md card-fintech">
+        <DialogHeader className="text-center">
+          <div className={`mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4 ${
+            isWithdraw ? 'bg-destructive/10' : 'bg-success/10'
+          }`}>
+            {isWithdraw ? (
+              <ArrowDownLeft className="h-6 w-6 text-destructive" />
+            ) : (
+              <ArrowUpRight className="h-6 w-6 text-success" />
+            )}
+          </div>
+          <DialogTitle className="text-2xl">
+            {isWithdraw ? 'Withdraw Money' : 'Deposit Money'}
+          </DialogTitle>
+          <DialogDescription>
+            {isWithdraw 
+              ? 'Transfer money from your account' 
+              : 'Add money to your account'
+            }
+          </DialogDescription>
+        </DialogHeader>
 
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-            {/* Transaction Type Selection */}
-            <FormField
-              control={form.control}
-              name="kind"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Transaction Type</FormLabel>
-                  <div className="grid grid-cols-2 gap-4">
-                    {(['deposit', 'withdraw'] as const).map((type) => (
-                      <Button
-                        key={type}
-                        type="button"
-                        variant={field.value === type ? 'default' : 'outline'}
-                        onClick={() => {
-                          field.onChange(type);
-                          setSelectedType(type);
-                        }}
-                        className={cn(
-                          "h-20 flex-col space-y-2 transition-all",
-                          field.value === type && type === 'deposit' && "bg-gradient-success hover:bg-gradient-success/90",
-                          field.value === type && type === 'withdraw' && "bg-destructive hover:bg-destructive/90"
-                        )}
-                      >
-                        {type === 'deposit' ? (
-                          <ArrowDownLeft className="h-5 w-5" />
-                        ) : (
-                          <ArrowUpRight className="h-5 w-5" />
-                        )}
-                        <span className="capitalize font-medium">{type}</span>
-                      </Button>
-                    ))}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Account Selection */}
-            <FormField
-              control={form.control}
-              name="account_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Account</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select an account" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {accounts.map((account) => (
-                        <SelectItem key={account.id} value={account.id}>
-                          <div className="flex items-center space-x-2">
-                            <span>{account.id.slice(0, 8)}...</span>
-                            <Badge variant="outline">{account.currency}</Badge>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Amount Input */}
-            <FormField
-              control={form.control}
-              name="amount_cents"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Amount
-                    {selectedAccount && (
-                      <Badge variant="outline" className="ml-2">
-                        {selectedAccount.currency}
-                      </Badge>
-                    )}
-                  </FormLabel>
-                  <div className="relative">
-                    <Input
-                      type="text"
-                      inputMode="decimal"
-                      placeholder="0.00"
-                      className="pr-4 text-lg font-mono transition-all focus:ring-2 focus:ring-primary/20"
-                      value={field.value ? (field.value / 100).toFixed(2) : ''}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        // Allow only numbers and decimal point
-                        if (!/^\d*\.?\d{0,2}$/.test(value)) return;
-                        
-                        const numValue = parseFloat(value) || 0;
-                        field.onChange(Math.round(numValue * 100)); // Convert to cents
-                      }}
-                      onBlur={() => {
-                        // Format on blur to ensure proper decimal places
-                        if (field.value) {
-                          const formatted = (field.value / 100).toFixed(2);
-                          field.onChange(Math.round(parseFloat(formatted) * 100));
-                        }
-                      }}
-                    />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
-                      {selectedAccount?.currency || 'USD'}
-                    </div>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Submit Button */}
-            <Button 
-              type="submit" 
-              disabled={isLoading || !form.formState.isValid}
-              className={cn(
-                "w-full h-12 font-medium transition-all",
-                selectedType === 'deposit' 
-                  ? "bg-gradient-success hover:bg-gradient-success/90" 
-                  : "bg-destructive hover:bg-destructive/90"
-              )}
-            >
-              {isLoading ? 'Processing...' : `Submit ${selectedType}`}
-            </Button>
-
-            {/* Receipt Upload (Optional) */}
-            <div className="pt-4 border-t border-border">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <Card className="gradient-card border-primary/20">
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
-                <Label className="text-sm text-muted-foreground">
-                  Upload Receipt (Optional)
-                </Label>
-                <Button type="button" variant="ghost" size="sm">
-                  <Upload className="h-4 w-4 mr-2" />
-                  Choose File
-                </Button>
+                <div>
+                  <p className="text-sm text-muted-foreground">Current Balance</p>
+                  <p className="text-lg font-semibold">{formatCurrency(account.balance)}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-muted-foreground">Account</p>
+                  <p className="text-sm font-medium">{account.accountNumber}</p>
+                </div>
               </div>
+            </CardContent>
+          </Card>
+
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="amount" className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4" />
+                Amount
+              </Label>
+              <Input
+                id="amount"
+                type="number"
+                step="0.01"
+                min="0.01"
+                placeholder="0.00"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="text-lg h-12 mt-2"
+                required
+              />
             </div>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+
+            <div>
+              <Label htmlFor="description">Description (Optional)</Label>
+              <Textarea
+                id="description"
+                placeholder={`Enter description for this ${type}...`}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="mt-2"
+                rows={3}
+              />
+            </div>
+          </div>
+
+          {/* Balance Preview */}
+          {amount && parseFloat(amount) > 0 && (
+            <Card className={`border-dashed ${
+              isWithdraw && newBalance < 0 
+                ? 'border-destructive/50 bg-destructive/5' 
+                : 'border-success/50 bg-success/5'
+            }`}>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">New Balance</span>
+                  <span className={`font-semibold ${
+                    isWithdraw && newBalance < 0 ? 'text-destructive' : 'text-success'
+                  }`}>
+                    {formatCurrency(newBalance)}
+                  </span>
+                </div>
+                {isWithdraw && newBalance < 0 && (
+                  <div className="flex items-center gap-2 mt-2 text-sm text-destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    Insufficient funds
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          <div className="flex gap-3 pt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              className="flex-1"
+              disabled={isLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              className={`flex-1 ${isWithdraw ? 'bg-destructive hover:bg-destructive/90' : 'btn-gradient'}`}
+              disabled={isLoading || (isWithdraw && newBalance < 0)}
+            >
+              {isLoading ? 'Processing...' : `${isWithdraw ? 'Withdraw' : 'Deposit'} ${formatCurrency(parseFloat(amount || '0'))}`}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
