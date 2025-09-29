@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -60,23 +60,25 @@ const stats = [
 
 export function LandingPage() {
   const navigate = useNavigate();
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      logout({ logoutParams: { returnTo: window.location.origin } });
+    }
+  }, [isAuthenticated, logout]);
 
   const handleGetStarted = () => {
     try {
-      if (isAuthenticated) {
-        navigate("/dashboard");
-      } else {
-        loginWithRedirect({
-          authorizationParams: {
-            connection: 'google-oauth2',
-            prompt: 'select_account'
-          }
-        });
-      }
+      loginWithRedirect({
+        authorizationParams: {
+          connection: 'google-oauth2',
+          prompt: 'select_account'
+        }
+      });
     } catch (error) {
-      console.error("Navigation failed:", error);
+      console.error("Login failed:", error);
     }
   };
 
@@ -112,13 +114,6 @@ export function LandingPage() {
                   Get Started Free
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                {/* <Button 
-                  variant="outline" 
-                  size="lg" 
-                  className="text-lg px-8 py-6 h-auto border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                >
-                  Watch Demo
-                </Button> */}
               </div>
 
               <div className="flex items-center gap-6 pt-4">
