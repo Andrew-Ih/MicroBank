@@ -40,7 +40,7 @@ services:
       - "5434:5432"
 
   # Services
-    accounts-service:
+  accounts-service:
     build: ./services/accounts
     ports:
       - "8000:8000"
