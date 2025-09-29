@@ -1,0 +1,39 @@
+# Rails
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Database
+/db/*.sqlite3
+/db/*.sqlite3-*
+
+# Environment variables
+/.env
+/.env.local
+
+# Bundler
+/vendor/bundle
+
+# Node modules (if using)
+/node_modules
+
+# Coverage reports
+/coverage/
+
+# Ignore pidfiles, but keep the directory.
+/tmp/pids/*
+!/tmp/pids/
+!/tmp/pids/.keep
+
+# Ignore storage (uploaded files in development and any SQLite databases).
+/storage/*
+!/storage/.keep
+/tmp/storage/*
+!/tmp/storage/
+!/tmp/storage/.keep
+
+/public/assets
+
+# Ignore master key for decrypting credentials
+/config/master.key
