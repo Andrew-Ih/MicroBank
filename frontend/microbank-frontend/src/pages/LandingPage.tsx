@@ -71,12 +71,7 @@ export function LandingPage() {
 
   const handleGetStarted = () => {
     try {
-      loginWithRedirect({
-        authorizationParams: {
-          connection: 'google-oauth2',
-          prompt: 'select_account'
-        }
-      });
+      loginWithRedirect();
     } catch (error) {
       console.error("Login failed:", error);
     }
