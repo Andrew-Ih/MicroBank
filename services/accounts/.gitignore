@@ -37,3 +37,7 @@
 
 # Ignore master key for decrypting credentials
 /config/master.key
+
+# Cache files
+/tmp/cache/*
+!/tmp/cache/.keep
