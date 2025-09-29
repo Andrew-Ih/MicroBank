@@ -61,7 +61,12 @@ export function Header({ onMenuClick }: HeaderProps) {
             <Button
               onClick={async () => {
                 try {
-                  await loginWithRedirect();
+                  await loginWithRedirect({
+                    authorizationParams: {
+                      connection: 'google-oauth2',
+                      prompt: 'select_account'
+                    }
+                  });
                 } catch (error) {
                   console.error("Login failed:", error);
                   alert("Login failed. Please try again.");
