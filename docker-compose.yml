@@ -10,6 +10,16 @@ services:
     volumes:
       - "./infra/localstack:/etc/localstack/init/ready.d"
 
+  # Frontend
+  frontend:
+    build: ./frontend/microbank-frontend
+    ports:
+      - "8080:4173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+    depends_on:
+      - accounts-service
+
   # Databases
   accounts-db:
     image: postgres:15
