@@ -20,10 +20,11 @@ interface Account {
 interface TransactionFormProps {
   type: 'deposit' | 'withdraw';
   onClose: () => void;
+  onSuccess?: () => void;
   account: Account;
 }
 
-export function TransactionForm({ type, onClose, account }: TransactionFormProps) {
+export function TransactionForm({ type, onClose, onSuccess, account }: TransactionFormProps) {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -60,13 +61,11 @@ export function TransactionForm({ type, onClose, account }: TransactionFormProps
 
     setIsLoading(true);
     
-    // Simulate API call
-    // In the handleSubmit function, replace the mock API call with:
     try {
       const transaction = await apiService.createTransaction({
         account_id: account.id,
         kind: type,
-        amount_cents: Math.round(amountNum * 100) // Convert to cents
+        amount_cents: Math.round(amountNum * 100)
       });
       
       toast({
@@ -75,6 +74,7 @@ export function TransactionForm({ type, onClose, account }: TransactionFormProps
         variant: "default",
       });
       
+      onSuccess?.();
       onClose();
     } catch (error) {
       toast({
@@ -85,15 +85,6 @@ export function TransactionForm({ type, onClose, account }: TransactionFormProps
     } finally {
       setIsLoading(false);
     }
-    
-    toast({
-      title: `${type === 'deposit' ? 'Deposit' : 'Withdrawal'} Initiated`,
-      description: `Your ${type} of ${formatCurrency(amountNum)} is being processed`,
-      variant: "default",
-    });
-    
-    setIsLoading(false);
-    onClose();
   };
 
   const isWithdraw = type === 'withdraw';

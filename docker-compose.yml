@@ -29,6 +29,11 @@ services:
       POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   ledger-db:
     image: postgres:15
@@ -61,5 +66,7 @@ services:
       - AWS_REGION=ca-central-1
       - SNS_TOPIC_ARN=arn:aws:sns:ca-central-1:000000000000:microbank-transactions-requested
     depends_on:
-      - accounts-db
-      - localstack
+      accounts-db:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy

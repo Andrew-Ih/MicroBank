@@ -18,26 +18,19 @@ import {
 import { TransactionForm } from "./TransactionForm";
 import { TransactionHistory } from "./TransactionHistory";
 import { useAccount } from "@/hooks/useAccount";
+import { useTransactions } from "@/hooks/useTransactions"
 import heroImage from "@/assets/fintech-hero.jpg";
-
-const mockTransactions = [
-  {
-    id: "tx_1",
-    type: "deposit" as const,
-    amount: 2500.00,
-    status: "approved" as const,
-    description: "Salary Deposit",
-    timestamp: "2024-01-15T10:30:00Z",
-    balance: 125430.50
-  },
-  // ... other mock transactions
-];
 
 export function Dashboard() {
   const { account, loading, error } = useAccount();
   const [showBalance, setShowBalance] = useState(true);
   const [showTransactionForm, setShowTransactionForm] = useState(false);
   const [transactionType, setTransactionType] = useState<'deposit' | 'withdraw'>('deposit');
+  const { transactions, loading: transactionsLoading, refetch } = useTransactions(account?.id || null);
+
+  const handleTransactionSuccess = () => {
+    refetch(); // Refetch transactions after successful transaction
+  };
 
   if (loading) {
     return (
@@ -188,13 +181,14 @@ export function Dashboard() {
       </Card>
 
       {/* Transaction History */}
-      <TransactionHistory transactions={mockTransactions} />
+      <TransactionHistory transactions={transactions} />
 
       {/* Transaction Form Modal */}
       {showTransactionForm && (
         <TransactionForm
           type={transactionType}
           onClose={() => setShowTransactionForm(false)}
+          onSuccess={handleTransactionSuccess}
           account={account}
         />
       )}

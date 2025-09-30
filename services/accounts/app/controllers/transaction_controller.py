@@ -18,3 +18,9 @@ def create_transaction(
         id=str(transaction.id),
         status=transaction.status
     )
+
+@router.get("/account/{account_id}")
+def get_account_transactions(account_id: str, db: Session = Depends(get_db)):
+    transaction_service = TransactionService(db)
+    return transaction_service.get_account_transactions(account_id)
+

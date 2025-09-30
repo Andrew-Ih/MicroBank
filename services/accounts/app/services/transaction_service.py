@@ -46,4 +46,19 @@ class TransactionService:
         self.db.commit()  # Commit everything together
         
         return transaction
+    
+    def get_account_transactions(self, account_id: str):
+        transactions = self.db.query(Transaction).filter(
+            Transaction.account_id == account_id
+        ).order_by(Transaction.requested_at.desc()).all()
+        
+        return [{
+            "id": str(tx.id),
+            "type": tx.kind,
+            "amount": tx.amount_cents / 100,
+            "status": tx.status,  # This will be "pending" initially
+            "description": f"{tx.kind.title()} Transaction",
+            "timestamp": tx.requested_at.isoformat(),
+        } for tx in transactions]
+
 
