@@ -1,4 +1,5 @@
 #!/bin/bash
+export AWS_DEFAULT_REGION=ca-central-1
 # Create SNS topics
 awslocal sns create-topic --name microbank-transactions-requested
 awslocal sns create-topic --name microbank-transactions-settled

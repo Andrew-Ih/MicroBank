@@ -9,6 +9,11 @@ services:
       - DEBUG=1
     volumes:
       - "./infra/localstack:/etc/localstack/init/ready.d"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # Frontend
   frontend:
