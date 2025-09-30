@@ -49,6 +49,12 @@ class ApiService {
     if (!response.ok) throw new Error('Failed to create transaction');
     return response.json();
   }
+
+  async getAccountTransactions(accountId: string) {
+    const response = await fetch(`${API_BASE_URL}/v1/transactions/account/${accountId}`);
+    if (!response.ok) throw new Error('Failed to fetch transactions');
+    return response.json();
+  }
 }
 
 export const apiService = new ApiService();
