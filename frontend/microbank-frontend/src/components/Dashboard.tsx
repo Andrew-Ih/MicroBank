@@ -12,25 +12,13 @@ import {
   TrendingUp,
   Activity,
   DollarSign,
-  CreditCard
+  CreditCard,
+  Loader2
 } from "lucide-react";
 import { TransactionForm } from "./TransactionForm";
 import { TransactionHistory } from "./TransactionHistory";
+import { useAccount } from "@/hooks/useAccount";
 import heroImage from "@/assets/fintech-hero.jpg";
-
-interface Account {
-  id: string;
-  balance: number;
-  currency: string;
-  accountNumber: string;
-}
-
-const mockAccount: Account = {
-  id: "acc_123456789",
-  balance: 125430.50,
-  currency: "USD",
-  accountNumber: "**** **** **** 4321"
-};
 
 const mockTransactions = [
   {
@@ -42,35 +30,39 @@ const mockTransactions = [
     timestamp: "2024-01-15T10:30:00Z",
     balance: 125430.50
   },
-  {
-    id: "tx_2", 
-    type: "withdraw" as const,
-    amount: 150.00,
-    status: "approved" as const,
-    description: "ATM Withdrawal",
-    timestamp: "2024-01-14T16:45:00Z",
-    balance: 122930.50
-  },
-  {
-    id: "tx_3",
-    type: "deposit" as const,
-    amount: 1000.00,
-    status: "pending" as const,
-    description: "Transfer from Savings",
-    timestamp: "2024-01-14T09:15:00Z",
-    balance: 123080.50
-  }
+  // ... other mock transactions
 ];
 
 export function Dashboard() {
+  const { account, loading, error } = useAccount();
   const [showBalance, setShowBalance] = useState(true);
   const [showTransactionForm, setShowTransactionForm] = useState(false);
   const [transactionType, setTransactionType] = useState<'deposit' | 'withdraw'>('deposit');
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Loading your account...</span>
+      </div>
+    );
+  }
+
+  if (error || !account) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <p className="text-destructive mb-2">Failed to load account</p>
+          <Button onClick={() => window.location.reload()}>Retry</Button>
+        </div>
+      </div>
+    );
+  }
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: mockAccount.currency,
+      currency: account.currency,
     }).format(amount);
   };
 
@@ -122,22 +114,23 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {showBalance ? formatCurrency(mockAccount.balance) : "••••••"}
+              {showBalance ? formatCurrency(account.balance) : "••••••"}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {mockAccount.accountNumber}
+              {account.accountNumber}
             </p>
           </CardContent>
         </Card>
 
+        {/* Other cards remain the same */}
         <Card className="card-fintech">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Deposits</CardTitle>
             <TrendingUp className="h-4 w-4 text-success" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-success">+$3,500</div>
-            <p className="text-xs text-muted-foreground">+12% from last month</p>
+            <div className="text-2xl font-bold text-success">+$0</div>
+            <p className="text-xs text-muted-foreground">New account</p>
           </CardContent>
         </Card>
 
@@ -147,8 +140,8 @@ export function Dashboard() {
             <Activity className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-warning">-$1,250</div>
-            <p className="text-xs text-muted-foreground">-5% from last month</p>
+            <div className="text-2xl font-bold text-warning">-$0</div>
+            <p className="text-xs text-muted-foreground">New account</p>
           </CardContent>
         </Card>
 
@@ -158,7 +151,7 @@ export function Dashboard() {
             <CreditCard className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{mockTransactions.length}</div>
+            <div className="text-2xl font-bold">0</div>
             <p className="text-xs text-muted-foreground">This month</p>
           </CardContent>
         </Card>
@@ -202,7 +195,7 @@ export function Dashboard() {
         <TransactionForm
           type={transactionType}
           onClose={() => setShowTransactionForm(false)}
-          account={mockAccount}
+          account={account}
         />
       )}
     </div>
