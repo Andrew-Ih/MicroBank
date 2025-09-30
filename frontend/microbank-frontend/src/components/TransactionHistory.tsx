@@ -104,7 +104,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
                     {transaction.type === 'deposit' ? '+' : '-'}{formatCurrency(transaction.amount)}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex justify-end gap-2">
                   {getStatusBadge(transaction.status)}
                 </div>
               </div>
