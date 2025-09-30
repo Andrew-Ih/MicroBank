@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowUpRight, ArrowDownLeft, DollarSign, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+// Import your apiService (adjust the path as needed)
+import { apiService } from "@/services/api";
 
 interface Account {
   id: string;
@@ -59,7 +61,30 @@ export function TransactionForm({ type, onClose, account }: TransactionFormProps
     setIsLoading(true);
     
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // In the handleSubmit function, replace the mock API call with:
+    try {
+      const transaction = await apiService.createTransaction({
+        account_id: account.id,
+        kind: type,
+        amount_cents: Math.round(amountNum * 100) // Convert to cents
+      });
+      
+      toast({
+        title: `${type === 'deposit' ? 'Deposit' : 'Withdrawal'} Initiated`,
+        description: `Transaction ${transaction.id} is ${transaction.status}`,
+        variant: "default",
+      });
+      
+      onClose();
+    } catch (error) {
+      toast({
+        title: "Transaction Failed",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
     
     toast({
       title: `${type === 'deposit' ? 'Deposit' : 'Withdrawal'} Initiated`,

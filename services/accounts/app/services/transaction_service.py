@@ -29,17 +29,21 @@ class TransactionService:
             idempotency_key=idempotency_key
         )
         
-        # Create outbox entry
+        # Add to DB first to get the ID
+        self.db.add(transaction)
+        self.db.flush()  # This generates the ID without committing
+        
+        # Create outbox entry with correct transaction ID
         payload = {
-            "tx_id": str(transaction.id),
+            "tx_id": str(transaction.id),  # Now this will have the actual ID
             "account_id": request.account_id,
             "kind": request.kind,
             "amount_cents": request.amount_cents,
             "requested_at": datetime.utcnow().isoformat()
         }
         
-        self.db.add(transaction)
         self.outbox_service.create_event("microbank.transactions.requested", payload)
-        self.db.commit()
+        self.db.commit()  # Commit everything together
         
         return transaction
+
