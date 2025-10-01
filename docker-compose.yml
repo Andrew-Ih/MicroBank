@@ -75,3 +75,20 @@ services:
         condition: service_healthy
       localstack:
         condition: service_healthy
+
+  ledger-service:
+    build: ./services/ledger
+    ports:
+      - "8001:8001"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ledger-db:5432/ledger_dev
+      - AWS_ENDPOINT=http://localstack:4566
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY=test
+      - AWS_SECRET_KEY=test
+      - AWS_SQS_QUEUE_URL=http://localstack:4566/000000000000/microbank-ledger-queue
+      - AWS_SNS_TOPIC_ARN=arn:aws:sns:us-east-1:000000000000:microbank-transactions-settled
+    depends_on:
+      - ledger-db
+      - localstack
+
