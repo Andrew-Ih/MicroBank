@@ -1,0 +1,11 @@
+node_modules/
+*.log
+.env
+.DS_Store
+target/
+build/
+dist/
+img/
+*.png
+*.jpg
+*.jpeg
