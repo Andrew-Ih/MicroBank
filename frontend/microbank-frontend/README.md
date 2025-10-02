@@ -1,55 +1,42 @@
 # MicroBank Frontend
 
-A modern React frontend for the MicroBank polyglot microservices banking platform.
+## Project Overview
 
-## Tech Stack
+MicroBank Lite+ is a modern fintech banking platform built with React, TypeScript, and Tailwind CSS.
 
-- **React 18** with TypeScript
-- **Vite** for fast development and building
-- **Tailwind CSS** for styling
-- **shadcn/ui** for UI components
-- **React Query** for data fetching
-- **React Router** for navigation
+## Development Setup
 
-## Getting Started
+Requirements: Node.js & npm - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-### Prerequisites
+```sh
+# Clone the repository
+git clone <YOUR_GIT_URL>
 
-- Node.js 18+ and npm
+# Navigate to the project directory
+cd microbank-frontend
 
-### Installation
-
-```bash
 # Install dependencies
-npm install
+npm i
 
 # Start development server
 npm run dev
+```
 
+## Technologies Used
+
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
+- Auth0 Authentication
+
+## Build & Deploy
+
+```sh
 # Build for production
 npm run build
 
 # Preview production build
 npm run preview
 ```
-
-## Project Structure
-
-```
-src/
-├── components/     # Reusable UI components
-├── contexts/       # React contexts
-├── hooks/          # Custom hooks
-├── lib/            # Utilities and API functions
-├── pages/          # Page components
-└── main.tsx        # Application entry point
-```
-
-## Features
-
-- Modern banking interface
-- Real-time transaction updates
-- Responsive design
-- Dark/light theme support
-- Form validation
-- Toast notifications

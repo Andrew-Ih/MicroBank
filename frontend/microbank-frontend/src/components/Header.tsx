@@ -1,141 +1,119 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import { ConnectionStatus } from '@/components/ConnectionStatus';
-import { Bell, Settings, User, ChevronDown, Building2 } from 'lucide-react';
-import {
+import { Settings, User, LogOut, Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { 
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+} from "@/components/ui/dropdown-menu";
+import { ThemeToggle } from "./ThemeToggle";
+import { NotificationCenter } from "./NotificationCenter";
+import { useAuth0 } from '@auth0/auth0-react';
 
 interface HeaderProps {
-  connectionStatus: 'connecting' | 'connected' | 'disconnected' | 'error';
-  notificationCount?: number;
-  user?: {
-    id: string;
-    email: string;
-    name?: string;
-  };
+  onMenuClick?: () => void;
 }
 
-export function Header({ connectionStatus, notificationCount = 0, user }: HeaderProps) {
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-
-  const userInitials = user?.name 
-    ? user.name.split(' ').map(n => n[0]).join('').toUpperCase()
-    : user?.email?.slice(0, 2).toUpperCase() || 'U';
+export function Header({ onMenuClick }: HeaderProps) {
+  const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
-        {/* Logo and Brand */}
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <div className="p-2 bg-gradient-primary rounded-lg">
-              <Building2 className="h-6 w-6 text-white" />
+    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        {/* Left side - Logo and Menu */}
+        <div className="flex items-center gap-4">
+          {onMenuClick && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="lg:hidden"
+              onClick={onMenuClick}
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          )}
+          
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-primary">
+              <span className="text-primary-foreground font-bold text-sm">M</span>
             </div>
-            <div>
-              <h1 className="text-xl font-bold bg-gradient-hero bg-clip-text text-transparent">
-                Microbank
+            <div className="hidden sm:block">
+              <h1 className="text-xl font-bold text-primary">
+                Microbank Lite+
               </h1>
-              <Badge variant="outline" className="text-xs">
-                Lite+
-              </Badge>
+              <p className="text-xs text-muted-foreground -mt-0.5">Digital Banking</p>
             </div>
           </div>
         </div>
 
-        {/* Connection Status */}
-        <div className="hidden md:flex items-center space-x-4">
-          <ConnectionStatus status={connectionStatus} />
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center space-x-2">
+        {/* Right side - Actions */}
+        <div className="flex items-center gap-2">
           {/* Notifications */}
-          <DropdownMenu open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="relative h-9 w-9">
-                <Bell className="h-4 w-4" />
-                {notificationCount > 0 && (
-                  <Badge 
-                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0 bg-destructive text-destructive-foreground"
-                  >
-                    {notificationCount > 99 ? '99+' : notificationCount}
-                  </Badge>
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80">
-              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {notificationCount === 0 ? (
-                <div className="p-4 text-center text-sm text-muted-foreground">
-                  No new notifications
-                </div>
-              ) : (
-                <div className="max-h-64 overflow-y-auto">
-                  {Array.from({ length: Math.min(notificationCount, 5) }, (_, i) => (
-                    <DropdownMenuItem key={i} className="flex flex-col items-start space-y-1 p-4">
-                      <p className="text-sm font-medium">Transaction Completed</p>
-                      <p className="text-xs text-muted-foreground">
-                        Your deposit of $500.00 has been processed
-                      </p>
-                      <p className="text-xs text-muted-foreground">2 minutes ago</p>
-                    </DropdownMenuItem>
-                  ))}
-                </div>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {isAuthenticated && <NotificationCenter />}
 
           {/* Theme Toggle */}
           <ThemeToggle />
 
-          {/* User Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center space-x-2 h-9 px-2">
-                <Avatar className="h-6 w-6">
-                  <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                    {userInitials}
-                  </AvatarFallback>
-                </Avatar>
-                <ChevronDown className="h-3 w-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">
-                    {user?.name || 'User'}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {user?.email}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive">
-                <span>Sign out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Auth Button */}
+          {!isAuthenticated ? (
+            <Button
+              onClick={async () => {
+                try {
+                  await loginWithRedirect();
+                } catch (error) {
+                  console.error("Login failed:", error);
+                  alert("Login failed. Please try again.");
+                }
+              }}
+            >
+              Login
+            </Button>
+          ) : (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="flex items-center gap-2 hover:bg-accent/50">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
+                    <User className="h-4 w-4" />
+                  </div>
+                  <span className="hidden sm:inline text-sm font-medium">{user?.name || 'User'}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 card-fintech">
+                <DropdownMenuLabel>
+                  <div>
+                    <p className="font-medium">{user?.name || 'User'}</p>
+                    <p className="text-sm text-muted-foreground">{user?.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="cursor-pointer">
+                  <User className="mr-2 h-4 w-4" />
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <Settings className="mr-2 h-4 w-4" />
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  className="cursor-pointer text-destructive focus:text-destructive"
+                  onClick={async () => {
+                    try {
+                      await logout({ logoutParams: { returnTo: window.location.origin } });
+                    } catch (error) {
+                      console.error("Logout failed:", error);
+                      alert("Logout failed. Please try again.");
+                    }
+                  }}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
     </header>

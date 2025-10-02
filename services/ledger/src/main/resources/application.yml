@@ -1,0 +1,35 @@
+server:
+  port: 8001
+
+spring:
+  application:
+    name: ledger-service
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5433/ledger_dev
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+# AWS Configuration for LocalStack
+aws:
+  endpoint: http://localhost:4566
+  region: us-east-1
+  access-key: test
+  secret-key: test
+  sqs:
+    queue-url: http://localhost:4566/000000000000/microbank-ledger-queue
+  sns:
+    topic-arn: arn:aws:sns:us-east-1:000000000000:microbank-transactions-settled
+
+logging:
+  level:
+    com.microbank.ledger: DEBUG

@@ -2,23 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Microbank Lite+ - Modern Banking Platform</title>
-    <meta name="description" content="Microbank Lite+ - Modern polyglot microservices banking platform with real-time updates" />
-    <meta name="keywords" content="microservices, banking, fintech, react, rails, kotlin, real-time" />
-    <meta name="author" content="Microbank" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Microbank Lite+ | Premium Digital Banking</title>
+    <meta name="description" content="Modern fintech banking platform with real-time transactions, secure account management, and premium user experience" />
+    <meta name="author" content="Microbank Lite+" />
 
-    <meta property="og:title" content="Microbank Lite+ - Modern Banking Platform" />
-    <meta property="og:description" content="Experience modern banking with real-time updates, secure transactions, and polyglot microservices architecture" />
+    <meta property="og:title" content="Microbank Lite+ | Premium Digital Banking" />
+    <meta property="og:description" content="Modern fintech banking platform with real-time transactions, secure account management, and premium user experience" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="/favicon.svg" />
+    <meta property="og:image" content="/placeholder.svg" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@microbank" />
-    <meta name="twitter:title" content="Microbank Lite+ - Modern Banking Platform" />
-    <meta name="twitter:description" content="Polyglot microservices banking with Rails, Kotlin, React, and real-time features" />
-    <meta name="twitter:image" content="/favicon.svg" />
+    <meta name="twitter:image" content="/placeholder.svg" />
+    
+    <script>
+      // Prevent flash of unstyled content for dark mode
+      (function() {
+        const theme = localStorage.getItem('theme') || 
+                     (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
 
   <body>
