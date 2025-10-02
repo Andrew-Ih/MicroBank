@@ -17,6 +17,9 @@ import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.util.concurrent.CompletableFuture;
+
 
 import jakarta.annotation.PostConstruct;
 import java.net.URI;
@@ -52,8 +55,13 @@ public class TransactionConsumer {
     }
     
     @PostConstruct
-    @Async
     public void startConsuming() {
+        // Start the consumer in a separate thread
+        CompletableFuture.runAsync(this::consumeMessages);
+    }
+    
+    @Async
+    public void consumeMessages() {
         logger.info("Starting SQS consumer for queue: {}", queueUrl);
         
         while (true) {
@@ -89,9 +97,14 @@ public class TransactionConsumer {
         try {
             logger.info("Processing SQS message: {}", message.messageId());
             
-            // Parse the transaction request
-            TransactionRequest request = objectMapper.readValue(
-                message.body(), TransactionRequest.class);
+            // Parse SNS notification wrapper first
+            JsonNode snsNotification = objectMapper.readTree(message.body());
+            
+            // Extract the actual message from SNS notification
+            String actualMessage = snsNotification.get("Message").asText();
+            
+            // Parse the transaction request from the inner message
+            TransactionRequest request = objectMapper.readValue(actualMessage, TransactionRequest.class);
             
             // Process the transaction
             ledgerService.processTransaction(request);
