@@ -4,7 +4,7 @@ Polyglot microservices banking platform demonstrating event-driven architecture 
 
 ## Architecture Diagram
 
-![MicroBank Architecture](img/Microbank-Architecture-Diagram.png)
+![MicroBank Architecture](img/MicroBank-Architecture-Diagram.png)
 
 **Core Services:**
 - **Accounts Service** (Python) - User management, account operations
