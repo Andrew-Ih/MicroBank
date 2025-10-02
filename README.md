@@ -16,7 +16,6 @@ Polyglot microservices banking platform demonstrating event-driven architecture 
 - Event-driven messaging via SNS/SQS
 - Per-service PostgreSQL databases
 - S3 storage for documents
-- Observability: OpenTelemetry, Jaeger, Prometheus, Grafana
 
 **Key Features:**
 - Idempotent transactions with outbox pattern
