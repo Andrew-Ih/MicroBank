@@ -28,9 +28,12 @@ export function useAccount() {
         // Create user + account (idempotent)
         const result: UserWithAccount = await apiService.createUserWithAccount(user.email);
         
+        // Fetch real balance from ledger service
+        const balanceData = await apiService.getAccountBalance(result.account_id);
+        
         setAccount({
           id: result.account_id,
-          balance: 0, // Start with 0, will be updated by ledger service
+          balance: balanceData.balanceCents / 100, // Convert cents to dollars
           currency: result.currency,
           accountNumber: `**** **** **** ${result.account_id.slice(-4)}`
         });

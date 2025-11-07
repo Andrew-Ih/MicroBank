@@ -4,6 +4,7 @@ from .database import create_tables
 from .controllers import user_controller, account_controller, transaction_controller
 import asyncio
 from .outbox_publisher import publish_outbox_events
+from .settlement_consumer import consume_settlements
 
 app = FastAPI(title="Accounts Service")
 
@@ -25,6 +26,8 @@ def startup_event():
     create_tables()
     # Start outbox publisher as background task
     asyncio.create_task(publish_outbox_events())
+    # Start settlement consumer as background task
+    asyncio.create_task(consume_settlements())
 
 @app.get("/health")
 def health_check():

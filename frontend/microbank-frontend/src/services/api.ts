@@ -1,4 +1,5 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const LEDGER_API_URL = 'http://localhost:8001';
 
 export interface UserWithAccount {
   user_id: string;
@@ -53,6 +54,12 @@ class ApiService {
   async getAccountTransactions(accountId: string) {
     const response = await fetch(`${API_BASE_URL}/v1/transactions/account/${accountId}`);
     if (!response.ok) throw new Error('Failed to fetch transactions');
+    return response.json();
+  }
+
+  async getAccountBalance(accountId: string): Promise<{ accountId: string; balanceCents: number }> {
+    const response = await fetch(`${LEDGER_API_URL}/v1/balances/${accountId}`);
+    if (!response.ok) throw new Error('Failed to fetch balance');
     return response.json();
   }
 }

@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Bell, CheckCircle, AlertCircle, Info, X } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { useAccount } from "@/hooks/useAccount";
+import { io, Socket } from "socket.io-client";
 
 interface Notification {
   id: string;
@@ -14,36 +16,42 @@ interface Notification {
   read: boolean;
 }
 
-const mockNotifications: Notification[] = [
-  {
-    id: 'notif_1',
-    type: 'success',
-    title: 'Transaction Completed',
-    message: 'Your deposit of $2,500.00 has been successfully processed',
-    timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
-    read: false
-  },
-  {
-    id: 'notif_2', 
-    type: 'info',
-    title: 'Account Statement Ready',
-    message: 'Your monthly statement for January is now available',
-    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-    read: false
-  },
-  {
-    id: 'notif_3',
-    type: 'warning',
-    title: 'Low Balance Alert',
-    message: 'Your account balance is below your set threshold of $500.00',
-    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-    read: true
-  }
-];
+
 
 export function NotificationCenter() {
-  const [notifications, setNotifications] = useState(mockNotifications);
+  const { account } = useAccount();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [socket, setSocket] = useState<Socket | null>(null);
+
+  useEffect(() => {
+    if (!account?.id) return;
+
+    // Connect to notifications WebSocket
+    const newSocket = io('http://localhost:3000');
+    setSocket(newSocket);
+
+    // Join account room
+    newSocket.emit('join', account.id);
+
+    // Listen for notifications
+    newSocket.on('notification', (notification: any) => {
+      const newNotification: Notification = {
+        id: notification.id.toString(),
+        type: notification.type,
+        title: notification.title,
+        message: notification.message,
+        timestamp: new Date(notification.timestamp),
+        read: false
+      };
+      
+      setNotifications(prev => [newNotification, ...prev]);
+    });
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [account?.id]);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
