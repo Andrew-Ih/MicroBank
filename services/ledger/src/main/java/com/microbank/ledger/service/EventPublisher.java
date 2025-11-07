@@ -12,8 +12,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.PublishRequest;
 
-import java.net.URI;
-
 @Service
 public class EventPublisher {
     
