@@ -25,15 +25,13 @@ public class EventPublisher {
     @Value("${aws.sns.topic-arn}")
     private String topicArn;
     
-    public EventPublisher(@Value("${aws.endpoint}") String endpoint,
-                         @Value("${aws.region}") String region,
+    public EventPublisher(@Value("${aws.region}") String region,
                          @Value("${aws.access-key}") String accessKey,
                          @Value("${aws.secret-key}") String secretKey) {
         
         this.objectMapper = new ObjectMapper();
         
         this.snsClient = SnsClient.builder()
-            .endpointOverride(URI.create(endpoint))
             .region(Region.of(region))
             .credentialsProvider(StaticCredentialsProvider.create(
                 AwsBasicCredentials.create(accessKey, secretKey)))

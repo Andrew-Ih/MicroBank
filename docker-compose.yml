@@ -1,19 +1,19 @@
 services:
   # Infrastructure
-  localstack:
-    image: localstack/localstack:3.0
-    ports:
-      - "4566:4566"
-    environment:
-      - SERVICES=sns,sqs,s3
-      - DEBUG=1
-    volumes:
-      - "./infra/localstack:/etc/localstack/init/ready.d"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+  # localstack:
+  #   image: localstack/localstack:3.0
+  #   ports:
+  #     - "4566:4566"
+  #   environment:
+  #     - SERVICES=sns,sqs,s3
+  #     - DEBUG=1
+  #   volumes:
+  #     - "./infra/localstack:/etc/localstack/init/ready.d"
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 3
 
   # Frontend
   frontend:
@@ -78,16 +78,16 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://postgres:password@accounts-db:5432/accounts_dev
-      - AWS_ENDPOINT_URL=http://localstack:4566
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_REGION=ca-central-1
-      - SNS_TOPIC_ARN=arn:aws:sns:ca-central-1:000000000000:microbank-transactions-requested
+      - SNS_TOPIC_ARN=${SNS_TOPIC_ARN}
+      - AWS_SQS_QUEUE_URL=${SQS_ACCOUNTS_SETTLEMENTS_URL}
     depends_on:
       accounts-db:
         condition: service_healthy
-      localstack:
-        condition: service_healthy
+      # localstack:
+      #   condition: service_healthy
 
   ledger-service:
     build: ./services/ledger
@@ -95,13 +95,12 @@ services:
       - "8001:8001"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ledger-db:5432/ledger_dev
-      - AWS_ENDPOINT=http://localstack:4566
       - AWS_REGION=ca-central-1
-      - AWS_ACCESS_KEY=test
-      - AWS_SECRET_KEY=test
-      - AWS_SQS_QUEUE_URL=http://localstack:4566/000000000000/ledger-transactions
-      - AWS_SNS_TOPIC_ARN=arn:aws:sns:ca-central-1:000000000000:microbank-transactions-settled
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SQS_QUEUE_URL=${SQS_LEDGER_TRANSACTIONS_URL}
+      - AWS_SNS_TOPIC_ARN=${SNS_TOPIC_ARN_SETTLED}
     depends_on:
       - ledger-db
-      - localstack
+      # - localstack
 

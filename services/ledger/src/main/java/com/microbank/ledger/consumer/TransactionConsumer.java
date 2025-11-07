@@ -22,7 +22,6 @@ import java.util.concurrent.CompletableFuture;
 
 
 import jakarta.annotation.PostConstruct;
-import java.net.URI;
 import java.util.List;
 
 @Component
@@ -39,15 +38,13 @@ public class TransactionConsumer {
     @Value("${aws.sqs.queue-url}")
     private String queueUrl;
     
-    public TransactionConsumer(@Value("${aws.endpoint}") String endpoint,
-                              @Value("${aws.region}") String region,
+    public TransactionConsumer(@Value("${aws.region}") String region,
                               @Value("${aws.access-key}") String accessKey,
                               @Value("${aws.secret-key}") String secretKey) {
         
         this.objectMapper = new ObjectMapper();
         
         this.sqsClient = SqsClient.builder()
-            .endpointOverride(URI.create(endpoint))
             .region(Region.of(region))
             .credentialsProvider(StaticCredentialsProvider.create(
                 AwsBasicCredentials.create(accessKey, secretKey)))

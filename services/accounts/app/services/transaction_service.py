@@ -37,7 +37,7 @@ class TransactionService:
         payload = {
             "tx_id": str(transaction.id),  # Now this will have the actual ID
             "account_id": request.account_id,
-            "kind": request.kind,
+            "kind": request.kind.lower(),  # Convert to lowercase for ledger service
             "amount_cents": request.amount_cents,
             "requested_at": datetime.utcnow().isoformat()
         }

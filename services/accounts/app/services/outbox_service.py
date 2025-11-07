@@ -17,13 +17,16 @@ class OutboxService:
         self.db.add(outbox_entry)
     
     def publish_pending_events(self):
-        sns = boto3.client(
-            'sns',
-            endpoint_url=AWS_ENDPOINT_URL,
-            aws_access_key_id=AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-            region_name=AWS_REGION
-        )
+        # Configure SNS client for real AWS (no endpoint_url) or LocalStack
+        sns_config = {
+            'aws_access_key_id': AWS_ACCESS_KEY_ID,
+            'aws_secret_access_key': AWS_SECRET_ACCESS_KEY,
+            'region_name': AWS_REGION
+        }
+        if AWS_ENDPOINT_URL:
+            sns_config['endpoint_url'] = AWS_ENDPOINT_URL
+        
+        sns = boto3.client('sns', **sns_config)
         
         pending = self.db.query(Outbox).filter(Outbox.published_at.is_(None)).all()
         
