@@ -7,6 +7,7 @@ from ..schemas.user_schemas import CreateUserRequest, UserWithAccountResponse
 router = APIRouter(prefix="/v1/users", tags=["users"])
 
 @router.post("/", response_model=UserWithAccountResponse)
+@router.post("", response_model=UserWithAccountResponse)
 def create_user(request: CreateUserRequest, db: Session = Depends(get_db)):
     user_service = UserService(db)
     result = user_service.create_user_with_account(request)

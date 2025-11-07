@@ -77,8 +77,12 @@ export function NotificationCenter() {
         return updated;
       });
       
-      // Optional: Show a toast or visual indicator that data may be outdated
-      console.log('New transaction notification received - you may want to refresh the page to see updated balance');
+      // Trigger data refresh for transaction notifications
+      if (notification.type === 'success' || notification.type === 'error') {
+        setTimeout(() => {
+          window.dispatchEvent(new Event('refreshData'));
+        }, 500);
+      }
     });
 
     return () => {

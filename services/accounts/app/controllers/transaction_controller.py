@@ -7,6 +7,7 @@ from ..schemas.transaction_schemas import CreateTransactionRequest, TransactionR
 router = APIRouter(prefix="/v1/transactions", tags=["transactions"])
 
 @router.post("/", response_model=TransactionResponse)
+@router.post("", response_model=TransactionResponse)
 def create_transaction(
     request: CreateTransactionRequest,
     db: Session = Depends(get_db),
