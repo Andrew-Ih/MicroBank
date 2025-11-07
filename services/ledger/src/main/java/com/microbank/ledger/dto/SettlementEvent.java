@@ -2,6 +2,7 @@ package com.microbank.ledger.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public class SettlementEvent {
@@ -18,7 +19,7 @@ public class SettlementEvent {
     private Long balanceCents;
     
     @JsonProperty("applied_at")
-    private LocalDateTime appliedAt;
+    private String appliedAt;
     
     // Constructors
     public SettlementEvent() {}
@@ -28,7 +29,7 @@ public class SettlementEvent {
         this.accountId = accountId;
         this.outcome = outcome;
         this.balanceCents = balanceCents;
-        this.appliedAt = LocalDateTime.now();
+        this.appliedAt = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
     
     // Getters and Setters
@@ -44,6 +45,6 @@ public class SettlementEvent {
     public Long getBalanceCents() { return balanceCents; }
     public void setBalanceCents(Long balanceCents) { this.balanceCents = balanceCents; }
     
-    public LocalDateTime getAppliedAt() { return appliedAt; }
-    public void setAppliedAt(LocalDateTime appliedAt) { this.appliedAt = appliedAt; }
+    public String getAppliedAt() { return appliedAt; }
+    public void setAppliedAt(String appliedAt) { this.appliedAt = appliedAt; }
 }
