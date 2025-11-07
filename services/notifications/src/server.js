@@ -80,14 +80,22 @@ async function processMessage(message) {
     const settlementData = JSON.parse(snsMessage.Message);
     
     // Create notification with specific details
-    const amountDollars = (settlementData.balance_cents / 100).toFixed(2);
+    const balanceDollars = (settlementData.balance_cents / 100).toFixed(2);
+    const currentDate = new Date().toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    
     const notification = {
       id: Date.now(),
       type: settlementData.outcome === 'approved' ? 'success' : 'error',
-      title: settlementData.outcome === 'approved' ? 'Transaction Completed' : 'Transaction Failed',
+      title: settlementData.outcome === 'approved' ? 'Transaction Approved' : 'Transaction Failed',
       message: settlementData.outcome === 'approved' 
-        ? `Your deposit has been successfully processed. New balance: $${amountDollars}`
-        : `Your transaction was rejected`,
+        ? `Your transaction has been approved on ${currentDate}. New balance: $${balanceDollars}`
+        : `Your transaction was rejected on ${currentDate}. Please try again or contact support.`,
       accountId: settlementData.account_id,
       txId: settlementData.tx_id,
       balanceCents: settlementData.balance_cents,
