@@ -58,6 +58,19 @@ services:
     ports:
       - "5434:5432"
 
+  # Database UI
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@microbank.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    depends_on:
+      - accounts-db
+      - ledger-db
+      - notifications-db
+
   # Services
   accounts-service:
     build: ./services/accounts
