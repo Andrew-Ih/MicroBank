@@ -4,4 +4,4 @@ services/accounts/.env
 services/ledger/.env
 services/notifications/.env
 services/ledger/target/
-services/ledger/target/classes/application.yml
+services/ledger/target/classes/application.ymlservices/ledger/src/main/resources/application.yml
