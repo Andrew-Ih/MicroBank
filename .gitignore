@@ -1,1 +1,7 @@
 .env
+*.env
+services/accounts/.env
+services/ledger/.env
+services/notifications/.env
+services/ledger/target/
+services/ledger/target/classes/application.yml
