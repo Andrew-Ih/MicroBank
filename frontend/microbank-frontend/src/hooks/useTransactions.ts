@@ -22,5 +22,17 @@ export function useTransactions(accountId: string | null) {
     fetchTransactions();
   }, [fetchTransactions]);
 
+  // Listen for refresh events from notifications
+  useEffect(() => {
+    const handleRefresh = () => {
+      if (accountId) {
+        fetchTransactions();
+      }
+    };
+
+    window.addEventListener('refreshData', handleRefresh);
+    return () => window.removeEventListener('refreshData', handleRefresh);
+  }, [accountId, fetchTransactions]);
+
   return { transactions, loading, refetch: fetchTransactions };
 }

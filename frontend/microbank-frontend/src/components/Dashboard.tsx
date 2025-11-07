@@ -13,7 +13,8 @@ import {
   Activity,
   DollarSign,
   CreditCard,
-  Loader2
+  Loader2,
+  RefreshCw
 } from "lucide-react";
 import { TransactionForm } from "./TransactionForm";
 import { TransactionHistory } from "./TransactionHistory";
@@ -30,6 +31,10 @@ export function Dashboard() {
 
   const handleTransactionSuccess = () => {
     refetch(); // Refetch transactions after successful transaction
+  };
+
+  const handleRefresh = () => {
+    window.location.reload(); // Simple refresh for now
   };
 
   if (loading) {
@@ -78,12 +83,23 @@ export function Dashboard() {
                 Manage your finances with confidence
               </p>
             </div>
-            <div className="hidden lg:block">
-              <img 
-                src={heroImage} 
-                alt="Financial Dashboard" 
-                className="w-48 h-24 object-cover rounded-2xl opacity-80"
-              />
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRefresh}
+                className="hidden sm:flex items-center gap-2"
+              >
+                <RefreshCw className="h-4 w-4" />
+                Refresh
+              </Button>
+              <div className="hidden lg:block">
+                <img 
+                  src={heroImage} 
+                  alt="Financial Dashboard" 
+                  className="w-48 h-24 object-cover rounded-2xl opacity-80"
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, CheckCircle, AlertCircle, Info, X } from "lucide-react";
+import { Bell, CheckCircle, AlertCircle, Info, X, Trash2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useAccount } from "@/hooks/useAccount";
 import { io, Socket } from "socket.io-client";
@@ -18,11 +18,36 @@ interface Notification {
 
 
 
+const NOTIFICATIONS_STORAGE_KEY = 'microbank_notifications';
+
 export function NotificationCenter() {
   const { account } = useAccount();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [socket, setSocket] = useState<Socket | null>(null);
+
+  // Load notifications from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem(NOTIFICATIONS_STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored).map((n: any) => ({
+          ...n,
+          timestamp: new Date(n.timestamp)
+        }));
+        setNotifications(parsed);
+      } catch (e) {
+        console.error('Failed to parse stored notifications:', e);
+      }
+    }
+  }, []);
+
+  // Save notifications to localStorage whenever they change (except on initial load)
+  useEffect(() => {
+    if (notifications.length > 0) {
+      localStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(notifications));
+    }
+  }, [notifications]);
 
   useEffect(() => {
     if (!account?.id) return;
@@ -45,7 +70,15 @@ export function NotificationCenter() {
         read: false
       };
       
-      setNotifications(prev => [newNotification, ...prev]);
+      setNotifications(prev => {
+        const updated = [newNotification, ...prev];
+        // Immediately save to localStorage
+        localStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(updated));
+        return updated;
+      });
+      
+      // Optional: Show a toast or visual indicator that data may be outdated
+      console.log('New transaction notification received - you may want to refresh the page to see updated balance');
     });
 
     return () => {
@@ -95,6 +128,14 @@ export function NotificationCenter() {
     );
   };
 
+  const deleteNotification = (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+  const clearAllNotifications = () => {
+    setNotifications([]);
+  };
+
   return (
     <div className="relative">
       <Button 
@@ -125,16 +166,28 @@ export function NotificationCenter() {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg">Notifications</CardTitle>
                 <div className="flex items-center gap-2">
-                  {unreadCount > 0 && (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={markAllAsRead}
-                      className="text-xs"
-                    >
-                      Mark all read
-                    </Button>
-                  )}
+                  <div className="flex gap-1">
+                    {unreadCount > 0 && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={markAllAsRead}
+                        className="text-xs"
+                      >
+                        Mark all read
+                      </Button>
+                    )}
+                    {notifications.length > 0 && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={clearAllNotifications}
+                        className="text-xs text-destructive hover:text-destructive"
+                      >
+                        Clear all
+                      </Button>
+                    )}
+                  </div>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -168,9 +221,22 @@ export function NotificationCenter() {
                               <h4 className="text-sm font-medium truncate">
                                 {notification.title}
                               </h4>
-                              {!notification.read && (
-                                <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0 ml-2" />
-                              )}
+                              <div className="flex items-center gap-2">
+                                {!notification.read && (
+                                  <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
+                                )}
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteNotification(notification.id);
+                                  }}
+                                  className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
+                              </div>
                             </div>
                             <p className="text-sm text-muted-foreground mb-2">
                               {notification.message}
