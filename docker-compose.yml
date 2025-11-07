@@ -104,3 +104,15 @@ services:
       - ledger-db
       # - localstack
 
+  notifications-service:
+    build: ./services/notifications
+    ports:
+      - "3000:3000"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=ca-central-1
+      - SQS_NOTIFICATIONS_SETTLEMENTS_URL=${SQS_NOTIFICATIONS_SETTLEMENTS_URL}
+    depends_on:
+      - notifications-db
+
